@@ -53,7 +53,7 @@ function showToast(message, timeout = 2500){
     printBtn.addEventListener("click", () => window.print());
   }
 
-  // Optional: smooth scroll for internal anchor links
+  // Optional: smooth scroll for internal anchor links with header offset
   document.querySelectorAll('a[href^="#"]').forEach((a) => {
     a.addEventListener("click", (e) => {
       const id = a.getAttribute("href");
@@ -61,7 +61,15 @@ function showToast(message, timeout = 2500){
       const target = document.querySelector(id);
       if (!target) return;
       e.preventDefault();
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
+      
+      // Calculate offset: sticky header height + 12px
+      const header = document.querySelector(".site-header");
+      const headerHeight = header ? header.offsetHeight : 0;
+      const offset = headerHeight + 12;
+      
+      // Scroll with offset
+      const targetTop = target.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top: targetTop, behavior: "smooth" });
       history.pushState(null, "", id);
     });
   });
